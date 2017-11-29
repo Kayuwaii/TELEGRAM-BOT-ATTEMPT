@@ -18,15 +18,24 @@ namespace ConsoleApp2
             bool isRunning = true;
             while (isRunning)
             {
-                string command = Console.In.ReadLine();
-                if (command.StartsWith("/show"))
+                string[] command = Console.In.ReadLine().Split(' ');
+                switch (command[0])
                 {
-                    if (command.Equals("/show -all") || command.Equals("/show -a")) bot.ShowContact(true).Wait(); 
-                    else
-                    {
-                        string num = command.TrimStart(  '/', 's', 'h', 'o', 'w', ' ' );
-                        bot.ShowContact( false ,num).Wait();
-                    }
+                    case "/help":
+                        //TODO help;
+                        break;
+
+                    case "/show":
+                        //TODO Show;
+                        break;
+
+                    case "/quit":
+                        //Todo Quit;
+                        break;
+
+                    default:
+                        Console.WriteLine("Unknown Command " + command);
+                        break;
                 }
             }
         }
