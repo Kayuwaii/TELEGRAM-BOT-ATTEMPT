@@ -15,7 +15,20 @@ namespace ConsoleApp2
             Authenticate(bot).Wait();
 
             bot.SendMessage("34663453087").Wait();
-            Console.In.ReadLine();
+            bool isRunning = true;
+            while (isRunning)
+            {
+                string command = Console.In.ReadLine();
+                if (command.StartsWith("/show"))
+                {
+                    if (command.Equals("/show -all") || command.Equals("/show -a")) bot.ShowContact(true).Wait(); 
+                    else
+                    {
+                        string num = command.TrimStart(  '/', 's', 'h', 'o', 'w', ' ' );
+                        bot.ShowContact( false ,num).Wait();
+                    }
+                }
+            }
         }
 
         static async Task Authenticate(Bot bot)
