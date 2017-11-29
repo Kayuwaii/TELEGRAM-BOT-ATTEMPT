@@ -14,7 +14,8 @@ namespace ConsoleApp2
 
             Authenticate(bot).Wait();
 
-            bot.SendMessage("663453087").Wait();
+            bot.SendMessage("34663453087").Wait();
+            Console.In.ReadLine();
         }
 
         static async Task Authenticate(Bot bot)

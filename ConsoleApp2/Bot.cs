@@ -26,7 +26,7 @@ namespace ConsoleApp2
         {
             var hash = await client.SendCodeRequestAsync(phoneNumber);
 
-            var code = "94306"; // you can change code in debugger
+            var code = await Console.In.ReadLineAsync(); // you can change code in debugger
 
             var user = await client.MakeAuthAsync(phoneNumber, hash, code);
         }
@@ -36,11 +36,18 @@ namespace ConsoleApp2
             //get available contacts
             var result = await client.GetContactsAsync();
 
+            /*foreach (TLUser u in result.Users)
+            {
+                await Console.Out.WriteLineAsync(u.FirstName);
+                await Console.Out.WriteLineAsync(u.Phone);
+            }*/
             //find recipient in contacts
             var user = result.Users
                 .Where(x => x.GetType() == typeof(TLUser))
                 .Cast<TLUser>()
                 .FirstOrDefault(x => x.Phone == phoneNum);
+
+
 
             //send message
             await client.SendMessageAsync(new TLInputPeerUser() { UserId = user.Id }, "OUR_MESSAGE");
