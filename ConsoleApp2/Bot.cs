@@ -8,7 +8,7 @@ using TeleSharp.TL;
 using TeleSharp.TL.Contacts;
 using TLSharp.Core;
 
-namespace ConsoleApp2
+namespace Test
 {
     class Bot
     {
@@ -17,7 +17,8 @@ namespace ConsoleApp2
 
         public Bot(int api_id, string api_hash)
         {
-            this.client = new TelegramClient(api_id, api_hash);
+            var store = new FileSessionStore();
+            this.client = new TelegramClient( api_id, api_hash, store, "Session");
         }
 
         public async Task Connect()
@@ -37,15 +38,22 @@ namespace ConsoleApp2
             Contacts = await client.GetContactsAsync();
         }
 
-        public async Task SendMessage(string phoneNum)
+        public async Task SendMessage(string phoneNum, string content = null)
         {
-            //find recipient in contacts
-            var user = Contacts.Users
-                .Where(x => x.GetType() == typeof(TLUser))
-                .Cast<TLUser>()
-                .FirstOrDefault(x => x.Phone == phoneNum);
-            //send message
-            await client.SendMessageAsync(new TLInputPeerUser() { UserId = user.Id }, "OUR_MESSAGE");
+            if (content == null)
+            {
+                content = "Texto de prueba";
+            }
+            else
+            {
+                //find recipient in contacts
+                var user = Contacts.Users
+                    .Where(x => x.GetType() == typeof(TLUser))
+                    .Cast<TLUser>()
+                    .FirstOrDefault(x => x.Phone == phoneNum);
+                //send message
+                await client.SendMessageAsync(new TLInputPeerUser() { UserId = user.Id }, content);
+            }
         }
 
         public async Task ShowContact(bool allContacts = false, string phoneNum = null)
@@ -72,8 +80,22 @@ namespace ConsoleApp2
                         .FirstOrDefault(x => x.Phone == phoneNum);
                     await Console.Out.WriteLineAsync(user.FirstName + " " + user.LastName);
                     await Console.Out.WriteLineAsync(user.Phone);
-                    await Console.Out.WriteLineAsync((char) user.Id);
+                    await Console.Out.WriteLineAsync((char)user.Id);
                 }
+            }
+        }
+
+        public bool Stop()
+        {
+            try
+            {
+                client.Dispose();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.Out.WriteLine(e.Message);
+                return false;
             }
         }
 

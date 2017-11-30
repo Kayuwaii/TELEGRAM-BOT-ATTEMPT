@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp2
+namespace Test
 {
     class Program
     {
@@ -14,23 +14,34 @@ namespace ConsoleApp2
 
             Authenticate(bot).Wait();
 
-            bot.SendMessage("34663453087").Wait();
             bool isRunning = true;
             while (isRunning)
             {
                 string[] command = Console.In.ReadLine().Split(' ');
                 switch (command[0])
                 {
-                    case "/help":
-                        //TODO help;
+                    case "/send":
+                        string send = "";
+                        for(int i = 0; i < command.Length; i++)
+                        {
+                            if (i >= 2) send += command[i] + " ";
+                        }
+                        bot.SendMessage(command[1], command[2]).Wait();
                         break;
 
                     case "/show":
-                        //TODO Show;
+                        bot.ShowContact(true).Wait();
                         break;
 
                     case "/quit":
-                        //Todo Quit;
+                        if (bot.Stop())
+                        {
+                            Console.WriteLine("Succesfully Stopped. you can close the console now.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Something Went Wrong.");
+                        }
                         break;
 
                     default:
