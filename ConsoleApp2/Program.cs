@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,21 +23,41 @@ namespace Test
                 {
                     case "/send":
                         string send = "";
-                        for(int i = 0; i < command.Length; i++)
+                        for (int i = 0; i < command.Length; i++)
                         {
                             if (i >= 2) send += command[i] + " ";
                         }
-                        bot.SendMessage(command[1], command[2]).Wait();
+                        bot.SendMessage(command[1], send).Wait();
                         break;
 
                     case "/show":
-                        bot.ShowContact(true).Wait();
+                        bool exists = command.ElementAtOrDefault(1) != null;
+                        if (exists)
+                        {
+                            if (command[1].Equals("-a") || command[1].Equals("-all") || command[1].Equals("/a") || command[1].Equals("/all")) bot.ShowContact(true).Wait();
+                            else bot.ShowContact(false, command[1]).Wait();
+                        }
+                        else
+                        {
+                            Console.WriteLine("This command needs parameters");
+                        }
                         break;
 
                     case "/quit":
                         if (bot.Stop())
                         {
-                            Console.WriteLine("Succesfully Stopped. you can close the console now.");
+                            try
+                            {
+                                File.Delete(@"./*.dat");
+                            }
+                            catch(Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+                            finally
+                            {
+                                Console.WriteLine("Succesfully Stopped. you can close the console now.");
+                            }
                         }
                         else
                         {

@@ -14,10 +14,11 @@ namespace Test
     {
         private TLContacts Contacts;
         private TelegramClient client;
+        private FileSessionStore store;
 
         public Bot(int api_id, string api_hash)
         {
-            var store = new FileSessionStore();
+            store = new FileSessionStore();
             this.client = new TelegramClient( api_id, api_hash, store, "Session");
         }
 
@@ -90,6 +91,7 @@ namespace Test
             try
             {
                 client.Dispose();
+                
                 return true;
             }
             catch (Exception e)
