@@ -15,11 +15,12 @@ namespace Test
         private TLContacts Contacts;
         private TelegramClient client;
         private FileSessionStore store;
-
+        private List<ContactGroup> Groups = new List<ContactGroup>();
+        private List<TLUser> tempList = new List<TLUser>();
         public Bot(int api_id, string api_hash)
         {
             store = new FileSessionStore();
-            this.client = new TelegramClient( api_id, api_hash, store, "Session");
+            this.client = new TelegramClient(api_id, api_hash, store, "Session");
         }
 
         public async Task Connect()
@@ -35,8 +36,10 @@ namespace Test
 
             var user = await client.MakeAuthAsync(phoneNumber, hash, code);
 
+
             //get available contacts
             Contacts = await client.GetContactsAsync();
+
         }
 
         public async Task SendMessage(string phoneNum, string content = null)
@@ -54,6 +57,25 @@ namespace Test
                     .FirstOrDefault(x => x.Phone == phoneNum);
                 //send message
                 await client.SendMessageAsync(new TLInputPeerUser() { UserId = user.Id }, content);
+            }
+        }
+
+        public void SendMessageGroup(string name, string content = null)
+        {
+            if (content == null)
+            {
+                content = "Texto de prueba";
+            }
+            else
+            {
+                ContactGroup tempGroup = Groups.Where(x => x.Name.Equals("Test")) as ContactGroup;
+
+                Parallel.ForEach(tempGroup.Members, async (u) =>
+                {
+                    await client.SendMessageAsync(new TLInputPeerUser() { UserId = u.Id }, content);
+                });
+
+
             }
         }
 
@@ -86,12 +108,28 @@ namespace Test
             }
         }
 
+        public void getGroups()
+        {
+            var tempUser = Contacts.Users
+    .Where(x => x.GetType() == typeof(TLUser))
+    .Cast<TLUser>()
+    .FirstOrDefault(x => x.Phone == "34663453087");
+            tempList.Add(tempUser);
+            tempUser = Contacts.Users
+                .Where(x => x.GetType() == typeof(TLUser))
+                .Cast<TLUser>()
+                .FirstOrDefault(x => x.Phone == "34663453087");
+            tempList.Add(tempUser);
+            ContactGroup testGroup = new ContactGroup("Test Niggy", tempList, "Es un test premoh");
+            Groups.Add(testGroup);
+        }
+
         public bool Stop()
         {
             try
             {
                 client.Dispose();
-                
+
                 return true;
             }
             catch (Exception e)

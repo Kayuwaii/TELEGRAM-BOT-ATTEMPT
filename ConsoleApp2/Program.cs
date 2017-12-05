@@ -18,20 +18,35 @@ namespace Test
             bool isRunning = true;
             while (isRunning)
             {
+                bool exists;
                 string[] command = Console.In.ReadLine().Split(' ');
                 switch (command[0])
                 {
                     case "/send":
-                        string send = "";
-                        for (int i = 0; i < command.Length; i++)
+                        exists = command.ElementAtOrDefault(1) != null;
+                        if (exists)
                         {
-                            if (i >= 2) send += command[i] + " ";
+                            if (command[1].Equals("-g") || command[1].Equals("-group") || command[1].Equals("/g") || command[1].Equals("/group"))
+                            {
+
+                            }
+                            else{
+                                string send = "";
+                                for (int i = 0; i < command.Length; i++)
+                                {
+                                    if (i >= 2) send += command[i] + " ";
+                                }
+                                bot.SendMessage(command[1], send).Wait();
+                            }
                         }
-                        bot.SendMessage(command[1], send).Wait();
+                        else
+                        {
+                            Console.WriteLine("This command needs parameters");
+                        }
                         break;
 
                     case "/show":
-                        bool exists = command.ElementAtOrDefault(1) != null;
+                        exists = command.ElementAtOrDefault(1) != null;
                         if (exists)
                         {
                             if (command[1].Equals("-a") || command[1].Equals("-all") || command[1].Equals("/a") || command[1].Equals("/all")) bot.ShowContact(true).Wait();
@@ -41,6 +56,7 @@ namespace Test
                         {
                             Console.WriteLine("This command needs parameters");
                         }
+                        bot.getGroups();
                         break;
 
                     case "/quit":
@@ -48,7 +64,7 @@ namespace Test
                         {
                             try
                             {
-                                File.Delete(@"./*.dat");
+                                File.Delete(@"./Session.dat");
                             }
                             catch(Exception e)
                             {
@@ -66,7 +82,7 @@ namespace Test
                         break;
 
                     default:
-                        Console.WriteLine("Unknown Command " + command);
+                        Console.WriteLine("Unknown Command " + command[0]);
                         break;
                 }
             }
