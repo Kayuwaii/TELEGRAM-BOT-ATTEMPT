@@ -118,7 +118,7 @@ namespace Test
             tempUser = Contacts.Users
                 .Where(x => x.GetType() == typeof(TLUser))
                 .Cast<TLUser>()
-                .FirstOrDefault(x => x.Phone == "34663453087");
+                .FirstOrDefault(x => x.Phone == "34635878537");
             tempList.Add(tempUser);
             ContactGroup testGroup = new ContactGroup("Test", tempList, "Es un test premoh");
             Groups.Add(testGroup);
