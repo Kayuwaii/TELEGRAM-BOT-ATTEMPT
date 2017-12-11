@@ -111,17 +111,30 @@ namespace Test
         public void getGroups()
         {
             var tempUser = Contacts.Users
-    .Where(x => x.GetType() == typeof(TLUser))
-    .Cast<TLUser>()
-    .FirstOrDefault(x => x.Phone == "34663453087");
+                .Where(x => x.GetType() == typeof(TLUser))
+                .Cast<TLUser>()
+                .FirstOrDefault(x => x.Phone == "34663453087");
             tempList.Add(tempUser);
             tempUser = Contacts.Users
                 .Where(x => x.GetType() == typeof(TLUser))
                 .Cast<TLUser>()
                 .FirstOrDefault(x => x.Phone == "34663453087");
             tempList.Add(tempUser);
-            ContactGroup testGroup = new ContactGroup("Test Niggy", tempList, "Es un test premoh");
+            ContactGroup testGroup = new ContactGroup("Test", tempList, "Es un test premoh");
             Groups.Add(testGroup);
+        }
+
+        public async Task sendGroup(string groupName)
+        {
+            var tempGroup = Groups
+                .Where(x => x.GetType() == typeof(ContactGroup))
+                .Cast<ContactGroup>()
+                .FirstOrDefault(x => x.Name == groupName);
+
+            foreach(TLUser u in tempGroup.Members)
+            {
+                await SendMessage(u.Phone, "Hola que tal?");
+            }
         }
 
         public bool Stop()

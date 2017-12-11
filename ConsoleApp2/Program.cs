@@ -80,6 +80,17 @@ namespace Test
                             Console.WriteLine("Something Went Wrong.");
                         }
                         break;
+                    case "/sendgroup":
+                        exists = command.ElementAtOrDefault(1) != null;
+                        if (exists)
+                        {
+                            bot.sendGroup("Test").Wait();
+                        }
+                        else
+                        {
+                            Console.WriteLine("This command needs parameters");
+                        }
+                        break;
 
                     default:
                         Console.WriteLine("Unknown Command " + command[0]);
