@@ -7,9 +7,13 @@ using TeleSharp.TL;
 
 namespace Test
 {
+    /// <summary>
+    /// this object will hold a list with users that belong to "x" group (for example a group "teachers" would hold a list with Teachers contacts.
+    /// Any contact can be added to a group (as long as it's in contacts)
+    /// </summary>
     class ContactGroup
     {
-        public string Name;
+        public string Name; 
         public List<TLUser> Members;
         public string Description;
 

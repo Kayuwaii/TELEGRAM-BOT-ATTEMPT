@@ -17,24 +17,44 @@ namespace Test
         private FileSessionStore store;
         private List<ContactGroup> Groups = new List<ContactGroup>();
         private List<TLUser> tempList = new List<TLUser>();
+
+        /// <summary>
+        /// The constructor needs the API ID and API HASH.
+        /// Those are obtainable from the my.telegram.com interface.
+        /// </summary>
+        /// <param name="api_id">API ID</param>
+        /// <param name="api_hash">API HASH</param>
         public Bot(int api_id, string api_hash)
         {
             store = new FileSessionStore();
             this.client = new TelegramClient(api_id, api_hash, store, "Session");
+            //Create the Client.
         }
 
+        /// <summary>
+        /// Establish Connection with the Telegram Service
+        /// </summary>
+        /// <returns></returns>
         public async Task Connect()
         {
             await this.client.ConnectAsync();
         }
 
+        /// <summary>
+        /// This method requests an Authoritzation code to telegram, the user must input then.
+        /// </summary>
+        /// <param name="phoneNumber">Phone To send the code</param>
+        /// <returns></returns>
         public async Task Authenticate(String phoneNumber)
         {
             var hash = await client.SendCodeRequestAsync(phoneNumber);
+            //Request Code
 
-            var code = await Console.In.ReadLineAsync(); // you can change code in debugger
+            var code = await Console.In.ReadLineAsync();
+            //Input code
 
             var user = await client.MakeAuthAsync(phoneNumber, hash, code);
+            //Request Authoritzation with the code
 
 
             //get available contacts
@@ -42,6 +62,12 @@ namespace Test
 
         }
 
+        /// <summary>
+        /// Send a message to a specified phone
+        /// </summary>
+        /// <param name="phoneNum">Reciever phone (in international format)</param>
+        /// <param name="content">The content of the message</param>
+        /// <returns></returns>
         public async Task SendMessage(string phoneNum, string content = null)
         {
             if (content == null)
@@ -60,6 +86,11 @@ namespace Test
             }
         }
 
+        /// <summary>
+        /// Send a message to a group
+        /// </summary>
+        /// <param name="name">Group Name</param>
+        /// <param name="content"> Message Content</param>
         public void SendMessageGroup(string name, string content = null)
         {
             if (content == null)
@@ -75,10 +106,19 @@ namespace Test
                     await client.SendMessageAsync(new TLInputPeerUser() { UserId = u.Id }, content);
                 });
 
-
+                /*  NOTE:
+                 *  groups are not yet implemented to be created through the console,
+                 *  but they can be created manually in the code(for now)
+                 */
             }
         }
 
+        /// <summary>
+        /// Displays the contacts in the clients phone.
+        /// </summary>
+        /// <param name="allContacts">If true, all contacts will be shown.</param>
+        /// <param name="phoneNum">Specify a phone number to view detailed info (International Format)</param>
+        /// <returns></returns>
         public async Task ShowContact(bool allContacts = false, string phoneNum = null)
         {
             if (allContacts)
@@ -108,6 +148,9 @@ namespace Test
             }
         }
 
+        /// <summary>
+        /// Temporal method to create a group, and test group capabilities
+        /// </summary>
         public void getGroups()
         {
             var tempUser = Contacts.Users
@@ -124,6 +167,11 @@ namespace Test
             Groups.Add(testGroup);
         }
 
+        /// <summary>
+        /// Send Message to a group.
+        /// </summary>
+        /// <param name="groupName">group name</param>
+        /// <returns></returns>
         public async Task sendGroup(string groupName)
         {
             var tempGroup = Groups
@@ -131,18 +179,18 @@ namespace Test
                 .Cast<ContactGroup>()
                 .FirstOrDefault(x => x.Name == groupName);
 
-            foreach(TLUser u in tempGroup.Members)
+            foreach (TLUser u in tempGroup.Members)
             {
                 await SendMessage(u.Phone, "Hola que tal?");
             }
         }
 
+        //Stop the bot, and dispose of objects.
         public bool Stop()
         {
             try
             {
                 client.Dispose();
-
                 return true;
             }
             catch (Exception e)

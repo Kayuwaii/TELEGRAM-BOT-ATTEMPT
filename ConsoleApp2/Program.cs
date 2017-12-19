@@ -9,26 +9,43 @@ namespace Test
 {
     class Program
     {
+        /*  NOTE:
+         *  In this code, we are using MY phone number, it should be changed to YOUR own phone number.
+         *  Same goes for API authentiction, this code contains my API ID and API HASH, and therefore should be changed to YOURS.
+         */
         static void Main(string[] args)
         {
             Bot bot = new Bot(68128, "b6212e15b78cca650d1ced280a7640fc");
+            //Crear un nuevo objeto de tipo Bot. 
 
             Authenticate(bot).Wait();
+            //Authenticate the bot
 
-            bool isRunning = true;
+            bool isRunning = true; //Control the command handling loop.
             while (isRunning)
             {
                 bool exists;
                 string[] command = Console.In.ReadLine().Split(' ');
+                //Split each command word by word
+
+                /*  Command handler:
+                 *  Switch statemetn with a case for each different command
+                 *  
+                 *  Currently there are 4 commands:
+                 *      # send: Sends a message to the specified number(if it's on contacts)
+                 *      # show: Display Contact info, accepts parameters for either 1 single contact or all of them
+                 *      # quit: Stops the bot and deletes session data.
+                 *      # sendgroup: The same as send, but for a group.
+                 */
                 switch (command[0])
                 {
                     case "/send":
-                        exists = command.ElementAtOrDefault(1) != null;
+                        exists = command.ElementAtOrDefault(1) != null; //Check for the command argumnents
                         if (exists)
                         {
                             if (command[1].Equals("-g") || command[1].Equals("-group") || command[1].Equals("/g") || command[1].Equals("/group"))
                             {
-
+                                //Implemented (for now) as a different command
                             }
                             else{
                                 string send = "";
@@ -46,7 +63,7 @@ namespace Test
                         break;
 
                     case "/show":
-                        exists = command.ElementAtOrDefault(1) != null;
+                        exists = command.ElementAtOrDefault(1) != null; //Check for the command argumnents
                         if (exists)
                         {
                             if (command[1].Equals("-a") || command[1].Equals("-all") || command[1].Equals("/a") || command[1].Equals("/all")) bot.ShowContact(true).Wait();
@@ -64,7 +81,7 @@ namespace Test
                         {
                             try
                             {
-                                File.Delete(@"./Session.dat");
+                                File.Delete(@"Session.dat");
                             }
                             catch(Exception e)
                             {
@@ -81,7 +98,7 @@ namespace Test
                         }
                         break;
                     case "/sendgroup":
-                        exists = command.ElementAtOrDefault(1) != null;
+                        exists = command.ElementAtOrDefault(1) != null; //Check for the command argumnents
                         if (exists)
                         {
                             bot.sendGroup("Test").Wait();
@@ -99,10 +116,15 @@ namespace Test
             }
         }
 
+        /// <summary>
+        /// Authenticate to telegram with the specified phone.
+        /// </summary>
+        /// <param name="bot"></param>
+        /// <returns></returns>
         static async Task Authenticate(Bot bot)
         {
             await bot.Connect();
-            await bot.Authenticate("34663453087");
+            await bot.Authenticate("34663453087"); 
         }
 
 
